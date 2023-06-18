@@ -25,6 +25,7 @@ export const Search = () => {
     await update(book, selectedShelf);
     book.shelf = selectedShelf;
     const updatedBooks = [...books];
+    localStorage.setItem("thnvn_books", JSON.stringify(updatedBooks));
     setBooks(updatedBooks);
   }
 
