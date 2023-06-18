@@ -9,6 +9,7 @@ function App() {
   const [books, setBooks] = useState([]);
   const fetchData = async () => {
     const books = await getAll();
+    localStorage.setItem("thnvn_books", JSON.stringify(books));
     setBooks(books);
   }
 
@@ -23,8 +24,8 @@ function App() {
 
   return (
     <Routes>
-      <Route exact path="/" element={<Books books={books} onBookMove={onBookMove} />} />
-      <Route path="/search" element={<Search onBookMove={onBookMove}/>} />
+      <Route exact path="/" element={<Books books={books} onBookMove={onBookMove} isSearchMode={false} />} />
+      <Route path="/search" element={<Search />} />
     </Routes>
   );
 }

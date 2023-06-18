@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import { Shelf } from "./Shelf";
 
 
-export const Books = ({ books, onBookMove }) => {
+export const Books = ({ books, onBookMove, isSearchMode }) => {
+  const none = [];
   const currentlyReading = [];
   const wantToRead = [];
   const read = [];
@@ -14,8 +15,11 @@ export const Books = ({ books, onBookMove }) => {
       case "wantToRead":
         wantToRead.push(book);
         break;
-      default:
+      case "currentlyReading":
         currentlyReading.push(book);
+        break;
+      default:
+        none.push(book);
         break;
     }
   }
@@ -24,19 +28,20 @@ export const Books = ({ books, onBookMove }) => {
 
   return (
     <div className="list-books">
-      <div className="list-books-title">
+      {!isSearchMode ? <div className="list-books-title">
         <h1>MyReads</h1>
-      </div>
+      </div> : ""}
       <div className="list-books-content">
         <div>
-          <Shelf title={'Currently Reading'} books={currentlyReading} onBookMove={handleBookMove} />
-          <Shelf title={'Want To Read'} books={wantToRead} onBookMove={handleBookMove} />
-          <Shelf title={'Read'} books={read} onBookMove={handleBookMove} />
+          {none.length > 0 ? <Shelf title={'None'} books={none} onBookMove={handleBookMove} /> : ""}
+          {currentlyReading.length > 0 ? <Shelf title={'Currently Reading'} books={currentlyReading} onBookMove={handleBookMove} /> : ""}
+          {wantToRead.length > 0 ? <Shelf title={'Want To Read'} books={wantToRead} onBookMove={handleBookMove} /> : ""}
+          {read.length > 0 ? <Shelf title={'Read'} books={read} onBookMove={handleBookMove} /> : ""}
         </div>
       </div>
-      <div className="open-search">
+      {!isSearchMode ? <div className="open-search">
         <Link to="search" />
-      </div>
+      </div> : ""}
     </div>
   )
 }

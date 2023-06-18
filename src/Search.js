@@ -1,20 +1,31 @@
 import { useState } from "react";
-import { search } from "./BooksAPI";
-import { Shelf } from "./Shelf";
+import { search, update } from "./BooksAPI";
+import { Books } from "./Books";
 import { Link } from "react-router-dom";
 
-export const Search = ({ onBookMove }) => {
-  const [books, setBooks] = useState([]);
-  
-  const handleBookMove = (book, selectedShelf) => onBookMove(book, selectedShelf);
+export const Search = () => {
+  let [books, setBooks] = useState([]);
 
-  const searchBook = async (event) => {
-    const query = event.target.value;
-    let result = await search(query, 10);
-    if (!(result.length > 0)) {
+  const searchBook = async (queryInput) => {
+    let result = await search(queryInput, 5);
+    if (!(result?.length > 0)) {
       result = [];
     }
+    const localData = JSON.parse(localStorage.getItem("thnvn_books"));
+    for (const book of localData) {
+      const idx = result.findIndex(b => b.id === book.id);
+      if (idx > -1) {
+        result[idx].shelf = book.shelf;
+      }
+    }
     setBooks(result);
+  }
+
+  const onBookMove = async (book, selectedShelf) => {
+    await update(book, selectedShelf);
+    book.shelf = selectedShelf;
+    const updatedBooks = [...books];
+    setBooks(updatedBooks);
   }
 
   return (
@@ -26,12 +37,12 @@ export const Search = ({ onBookMove }) => {
             <input
               type="text"
               placeholder="Search by title, author, or ISBN"
-              onChange={(event) => searchBook(event)}
+              onChange={(event) => searchBook(event.target.value)}
             />
           </div>
         </div>
         <div className="search-books-results">
-          {books.length > 0 ? <Shelf title={'Result'} books={books} onBookMove={handleBookMove} /> : ""}
+          <Books books={books} onBookMove={onBookMove} isSearchMode={true} />
         </div>
       </div>
     </div>
